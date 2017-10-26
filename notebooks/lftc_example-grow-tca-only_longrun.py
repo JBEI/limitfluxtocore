@@ -65,5 +65,5 @@ pool = multiprocessing.Pool(processes=cpuCores)
 results = pool.map(anneal, seeds)
 
 # save results to file
-with open('results_tca_only_longrun.p', 'wb') as f:
+with open('test_data/results_tca_only_longrun.p', 'wb') as f:
     pickle.dump(results, f, pickle.HIGHEST_PROTOCOL)
