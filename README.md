@@ -10,6 +10,10 @@ with the following command. This may be called 'pip3' for the Python 3.x version
 pip install .
 ```
 
+# Python API and documentation
+
+See ttps://github.com/JBEI/limitfluxtocore/blob/master/docs/_build/html/index.html
+
 # Demo notebook
 
 A demonstration usage notebook is provided at https://github.com/JBEI/limitfluxtocore/blob/master/notebooks/lftc_example.ipynb
