@@ -2,6 +2,11 @@
 
 This library provies a set of algorithms which 1) systematically calculate flux bounds for any specified "core" of a genome-scale model so as to satisfy the bow tie approximation and 2) automatically identify an updated and optimal set of core reactions that can satisfy this approximation more efficiently. First, we leverage linear programming to simultaneously identify the lowest fluxes from peripheral metabolism into core metabolism compatible with the observed growth rate and extracellular metabolite exchange fluxes. Second, we use Simulated Annealing to identify an updated set of core reactions that allow for a minimum of fluxes into core metabolism to satisfy these experimental constraints.
 
+Please see license.txt and legal.txt for license details.
+
+# Demo notebook
+
+A demonstration usage notebook is provided at https://github.com/JBEI/limitfluxtocore/blob/master/notebooks/lftc_example.ipynb
 
 # Installing
 This software requires Python 3.x. You can install with pip after cloning and entering the git repo
@@ -13,10 +18,6 @@ pip install .
 # Python API and documentation
 
 See http://htmlpreview.github.io/?https://github.com/JBEI/limitfluxtocore/blob/master/docs/_build/html/index.html
-
-# Demo notebook
-
-A demonstration usage notebook is provided at https://github.com/JBEI/limitfluxtocore/blob/master/notebooks/lftc_example.ipynb
 
 # Use with jQMM
 
