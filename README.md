@@ -12,7 +12,7 @@ pip install .
 
 # Python API and documentation
 
-See ttps://github.com/JBEI/limitfluxtocore/blob/master/docs/_build/html/index.html
+See http://htmlpreview.github.io/?https://github.com/JBEI/limitfluxtocore/blob/master/docs/_build/html/index.html
 
 # Demo notebook
 
