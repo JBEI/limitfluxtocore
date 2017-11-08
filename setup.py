@@ -8,11 +8,11 @@ setup(
     description='Limit Flux To Core',
     author='The Quantitative Metabolic Modeling group',
     author_email='tbackman@lbl.gov',
-    url='https://github.com/JBEI/LimitFluxToCore',
+    url='https://github.com/JBEI/limitfluxtocore',
     packages=['lftc'],
-    install_requires=['cobra'],
-    license='see LICENSE file',
-    download_url = 'https://github.com/JBEI/LimitFluxToCore/archive/1.0.tar.gz', 
+    install_requires=['cobra', 'numpy'],
+    license='see license.txt file',
+    download_url = 'https://github.com/JBEI/limitfluxtocore/archive/1.0.tar.gz', 
     keywords = ['metabolism', 'flux'],
     classifiers = []
     )
