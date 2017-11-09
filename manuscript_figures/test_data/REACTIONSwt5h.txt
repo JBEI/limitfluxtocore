@@ -4,56 +4,16 @@
 #ance -- ./FAEE0410/FAEE_blahblah.txt).  will drop unnamed emu_network files in the current directory.
 # note: include a metabolite name in the MLIST to get it in fully enumerated form suitable for GCMS
 
-# biomass fluxes
-#&MLIST g6pbm 0	
-#&MLIST f6pbm 0	
-#&MLIST r5pbm 0	
-#&MLIST e4pbm 0	
-#&MLIST g3pbm 0	
-#&MLIST 13dpgbm 0	
-#&MLIST pepbm 0	
-#&MLIST pyrbm 0	
-#&MLIST accoabm 0
-#&MLIST oaabm 0	
-#&MLIST akgbm 0	
-#&MLIST co2bm 0
-
-# aa fluxes
-#&MLIST ala-L[c] 0
-#&MLIST ala-L[c] -1
-#&MLIST asp-L[c] 0
-##&MLIST asp-L[c] -1
-##&MLIST met-L[c] 0
-##&MLIST met-L[c] -1
-#&MLIST glu-L[c] 0
-##&MLIST glu-L[c] -1
-##&MLIST pro-L[c] 0
-#&MLIST pro-L[c] -1
-#&MLIST ser-L[c] 0
-#&MLIST ser-L[c] -1
-#&MLIST gly[c] 0
-##&MLIST gly[c] -1
-#&MLIST val-L[c] 0
-#&MLIST val-L[c] -1
-#&MLIST ile-L[c] 0
-#&MLIST ile-L[c] -1
-#&MLIST phe-L[c] 0
-#&MLIST phe-L[c] -1
-#&MLIST tyr-L[c] 0
-#&MLIST tyr-L[c] -1
-
-# metab fluxes
+# Metabolites with measured labeling, integers after metabolite are excluded carbon numbers, with 0 including all carbons
+#Add etoh_e_1_2 to AtomTransitions
 &MLIST etoh[e] 0
+
 &MLIST ac[e] 0
 &MLIST lac-L[e] 0
-#&MLIST glucon 0
-
-# Intracellular met fluxes
 &MLIST fdp 0
 &MLIST dhap 0
 &MLIST 3pg 0
 &MLIST pep 0
-#&MLIST pyr 0
 &MLIST ru5p-D 0
 &MLIST r5p 0
 &MLIST s7p 0
@@ -63,7 +23,6 @@
 &SOURCE glc-D[e]
 
 #&EXCLUDE co2 mlthf
-#&MLIST mlthf 0
 
 
 &VERBOSE
@@ -197,6 +156,48 @@ KARA2i	2ahbut --> 23dhmp	abcdef : abcdef
 DHAD2	23dhmp --> 3mop	abcdef : abcdef
 ILETA	akg + ile-L[c] <==> glu-L[c] + 3mop	ABCDE + abcdef : ABCDE + abcdef
 
+# Glutamine synthesis
+GLNS	glu-L[c] --> gln-L[c]	abcde : abcde
+
+# Arginine synthesis
+ACGS	accoa[c] + glu-L[c] --> acglu[c]	pq + abcde : abcdepq
+ACGK	acglu[c] --> acg5p[c]	abcdepq : abcdepq
+AGPR	acg5sa[c] <==> acg5p[c]	abcdepq : abcdepq
+ACOTA	acorn[c] + akg[c] <==> acg5sa[c] + glu-L[c]	abcdepq + ghijk : abcdepq + ghijk
+ACODA	acorn[c] --> ac[c] + orn[c]	abcdepq : pq + abcde
+CBPS	gln-L[c] + hco3[c] --> cbp[c] + glu-L[c]	 ghijk + f : f + ghijk
+HCO3E	co2[c] <==> hco3[c]	f : f
+OCBT	cbp[c] + orn[c] <==> citr-L[c]	f + abcde : abcdef
+ARGSS	asp-L[c] + citr-L[c] --> argsuc[c]	lmno + abcdef : abcdeflmno
+ARGSL	argsuc[c] <==> arg-L[c] + fum[c]	abcdeflmno : abcdef + (lmno;onml)
+
+#arginine degradation III / putrescine degradation II/I / 4-aminobutanoate degradation
+ARGDC	arg-L[c] --> agm[c] + co2[c]	abcdef : bcdef + a
+AGMT	agm[c] --> ptrc[c] + urea[c]	bcdef : (bcde;edcb) + f
+PTRCTA	ptrc[c] + akg[c] --> 4abutn[c] + glu-L[c]	(bcde;edcb) + ABCDE : bcde + ABCDE
+ABUTD	4abutn[c] --> 4abut[c]	bcde : bcde
+ABTA	4abut[c] + akg[c] --> sucsal[c] + glu-L[c]	bcde + ABCDE : bcde + ABCDE
+SSALx	sucsal[c] --> succ[c]	bcde : (bcde;edcb)
+SSALy	sucsal[c] --> succ[c]	bcde : (bcde;edcb)
+
+#more reactions added to core
+CBMK	co2[c] --> cbp[c]	a : a
+PRPPS	r5p[c] <==> prpp[c]	abcde : abcde
+GLUPRT	gln-L[c] + prpp[c] --> glu-L[c] + pram	abcde + ABCDE : abcde + ABCDE
+GMPS2	gln-L[c] --> glu-L[c]	abcde : abcde
+# dcamp has been simplified
+ADSS	asp-L[c] --> dcamp[c]	abcd : abcd
+ADSL1r	dcamp[c] --> fum[c]	abcd : (abcd;dcba)
+
+PRAGSr	gly[c] + pram[c] <==> gar[c]	ab + ABCDE : ABCDEab
+GART	for[c] + gar[c] --> fgam[c]	a + ABCDEFG : ABCDEFGa
+PRFGS	fgam[c] + gln-L[c] --> fpram[c] + glu-L[c]	ABCDEFGH + abcde : ABCDEFGH + abcde
+PRAIS	fpram[c] --> air[c]	ABCDEFGH : ABCDEFGH
+AIRC2	air[c] + hco3[c] --> 5caiz[c]	ABCDEFGH + a : ABCDEFGHa
+AIRC3	5aizc[c] <==> 5caiz[c]	ABCDEFGHI : ABCDEFGHI
+PRASCS	5aizc[c] + asp-L[c] <==> 25aics[c]	ABCDEFGHI + abcd  : ABCDEFGHIcdba
+ADSL2r	25aics[c] --> aicar[c] + fum[c]	ABCDEFGHIcdba : ABCDEFGHI + (abcd;bcda)
+
 
 # Leucine synthesis
 ##ACLS	pyr + accoa --> leuLp + co2	CDE + AB : ABDE + C
@@ -211,7 +212,6 @@ ILETA	akg + ile-L[c] <==> glu-L[c] + 3mop	ABCDE + abcdef : ABCDE + abcdef
 #IPMD	3c2hmp --> 3c4mop	abcdefg : abcdefg
 #OMCDC	3c4mop --> 4mop + co2	ABDGHEF : ABDGHE + F
 #LEUTAi	4mop --> leuL	ABDGHE : ABDGHE
-
 
 
 # Fluxes out
