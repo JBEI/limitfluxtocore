@@ -14,5 +14,7 @@ setup(
     license='see license.txt file',
     download_url = 'https://github.com/JBEI/limitfluxtocore/archive/1.0.tar.gz', 
     keywords = ['metabolism', 'flux'],
-    classifiers = []
+    classifiers = [],
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
     )

@@ -1,7 +1,7 @@
 import pytest
 import cobra
 import cobra.test
-from lftc import limitFluxToCore
+import lftc
 
 def test_limitFluxToCore():
     model = cobra.test.create_test_model("ecoli")
