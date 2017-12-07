@@ -56,6 +56,17 @@ def limitFluxToCore(
                 metabolites in the core in reverse direction.
     """
 
+    # sanity check inputs
+    assert type(model) is cobra.core.model.Model, \
+        'model is not of type cobra.core.model.Model'
+    assert type(coreReactionNames) is set, 'coreReactionNames is not a set'
+    assert 0 < len(coreReactionNames) <= len(model.reactions), \
+        'invalid size for coreReactionNames'
+    assert len(coreReactionNames.intersection([r.id for r in model.reactions])) \
+        == len(coreReactionNames), 'some core reaction names missing from model'
+    assert type(copyModel) is bool, 'copyModel not type bool'
+    assert type(currencyMetabolites) is set, 'currencyMetabolites is not a set'
+
     if copyModel:
         model = model.copy()
     
@@ -125,6 +136,18 @@ def setModelFluxes(model, producingFluxes, consumingFluxes):
         model (cobra.core.model.Model): A COBRApy genome scale model with 
             new flux bounds.
     """
+
+    # sanity check inputs
+    assert type(model) is cobra.core.model.Model, \
+        'model is not of type cobra.core.model.Model'
+    assert type(producingFluxes) is pd.core.series.Series
+    assert type(consumingFluxes) is pd.core.series.Series
+    reactionNames = [r.id for r in model.reactions]
+    assert len(set(producingFluxes.index).intersection(reactionNames)) \
+        == len(producingFluxes)
+    assert len(set(consumingFluxes.index).intersection(reactionNames)) \
+        == len(consumingFluxes)
+
     newModel = model.copy()
 
     for reactionName, fluxLimit in producingFluxes.iteritems():
@@ -179,6 +202,26 @@ class OptimalCoreProblem(Annealer):
                 is desirable to include exchange fluxes here so they don't get
                 added to the core.
         """
+        # sanity check inputs
+        assert type(model) is cobra.core.model.Model, \
+            'model is not of type cobra.core.model.Model'
+        reactionNames = [r.id for r in model.reactions]
+        assert type(state) is set, 'state is not a set'
+        assert 0 < len(state) <= len(model.reactions), \
+            'invalid size for state'
+        assert len(state.intersection([r.id for r in model.reactions])) \
+            == len(state), 'some initial state reaction names missing from model'
+        assert type(feed) is str
+        assert feed in reactionNames
+        assert type(currencyMetabolites) is set
+        assert type(minOverlapWithStart) is float
+        assert 0 <= minOverlapWithStart <= 1
+        assert type(maxOverlapWithModel) is float
+        assert 0 <= maxOverlapWithModel <= 1
+        assert type(excludeReactions) is set
+        assert len(set(excludeReactions).intersection(reactionNames)) \
+            == len(excludeReactions)
+
         
         self.currencyMetabolites = currencyMetabolites
         self.model = model.copy()
@@ -217,6 +260,9 @@ class OptimalCoreProblem(Annealer):
         
         self.excludeReactions = excludeReactions
         self.minOverlapWithStart = float(minOverlapWithStart)
+
+        assert self.minOverlapWithStart*len(self.startSet) < \
+            self.maxSize, 'max size not greater than min size!'
         super(OptimalCoreProblem, self).__init__(state)  # important!
 
     def move(self):
@@ -276,3 +322,35 @@ class OptimalCoreProblem(Annealer):
                 )
 
         return fluxIntoCore
+
+    def prune(self):
+        # Removes any individual newly added reactions which don't
+        # reduce total energy into the core. This reverses the addition
+        # of unnecessary individual reactions, however it does not
+        # combinatorially test removing multiple reactions simultaneously.
+
+        newReactions = self.state.difference(self.startSet)
+
+        for newReaction in newReactions:
+            oldState = self.state.copy()
+
+            # try removing a reaction and test if the core is still connected
+            tempState = self.state.copy()
+            tempState.remove(newReaction)
+            connected = findSubsetConnectedToFeed(
+                tempState,
+                self.feed,
+                self.currencyMetabolites,
+                self.model,
+                )
+
+            # if core is still connected, check the new energy
+            if len(connected) == len(tempState):
+                currentEnergy = self.energy()
+                self.state = connected
+                newEnergy = self.energy()
+
+                # if new energy is worse, go back to the old solution
+                # otherwise keep it
+                if newEnergy > currentEnergy:
+                    self.state = oldState

@@ -48,7 +48,7 @@ def anneal(seed):
     ocp.logFile.close()
     return [coreReactions, score]
 
-exchanges = [r.id for r in model.exchanges]
+exchanges = {r.id for r in model.exchanges}
 cpuCores = 64
 seeds = list(range(1,cpuCores*5,5))
 pool = multiprocessing.Pool(processes=cpuCores)
