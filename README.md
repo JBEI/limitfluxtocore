@@ -4,6 +4,12 @@ This library provies a set of algorithms which 1) systematically calculate flux 
 
 Please see license.txt and legal.txt for license details.
 
+# Citing
+
+If you use this software for published research, please cite the following journal article:
+Backman, T.W.H.; Ando, D.; Singh, J.; Keasling, J.D.; García Martín, H. Constraining Genome-Scale Models to Represent the Bow Tie Structure of Metabolism for 13C Metabolic Flux Analysis. Metabolites 2018, 8, 3.  
+http://www.mdpi.com/2218-1989/8/1/3
+
 # Demo notebook
 
 A demonstration usage notebook is provided at https://github.com/JBEI/limitfluxtocore/blob/master/notebooks/lftc_example.ipynb
